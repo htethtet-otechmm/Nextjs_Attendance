@@ -1,0 +1,58 @@
+.clockContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+  }
+  
+  .date {
+    font-size: 1.25rem;
+    color: #555;
+  }
+  
+  .location {
+    font-size: 1rem;
+    color: #777;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .time {
+    font-size: 5rem;
+    font-weight: 500;
+    color: #333;
+    margin: 1rem 0;
+    letter-spacing: 2px;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .button {
+    border: none;
+    padding: 1rem 2.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+  
+  .clockIn {
+    background-color: #000000;
+    color: #ffffff;
+  }
+  
+  .clockOut {
+    background-color: #e0e0e0;
+    color: #333;
+  }

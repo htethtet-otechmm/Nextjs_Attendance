@@ -1,0 +1,17 @@
+.checkoutContainer {
+    display: flex;
+    height: 100vh;
+    background-color: #f4f5f7;
+  }
+  
+  .mainContent {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .pageContent {
+    flex-grow: 1;
+    padding: 2rem;
+    background-color: #ffffff; 
+  }
