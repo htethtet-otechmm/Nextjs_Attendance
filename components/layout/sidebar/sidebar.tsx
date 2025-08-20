@@ -7,7 +7,7 @@ const Sidebar = () => {
       <nav className={styles.nav}>
         <ul>
           <li className={`${styles.navItem} ${styles.active}`}>
-            <a href="/dashboard">Check In/Out</a>
+            <a href="/checkin-out">Check In/Out</a>
           </li>
           <li className={styles.navItem}>
             <a href="/leave-requests">Leave Requests</a>

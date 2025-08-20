@@ -1,0 +1,15 @@
+.pageContainer {
+    display: flex;
+  }
+  
+  .mainContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .contentArea {
+    padding: 18px;
+    // background-color: #fafafa;
+    // flex: 1;
+  }

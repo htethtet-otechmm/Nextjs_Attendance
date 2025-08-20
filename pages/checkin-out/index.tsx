@@ -1,33 +1,24 @@
 'use client'; 
 
 import React, { useState, useEffect } from 'react';
+import dayjs from 'dayjs'; 
 import styles from './checkin.module.scss';
 import { MapPin } from "lucide-react";
 
 const Clock = () => {
-  const [time, setTime] = useState(new Date());
+  const [time, setTime] = useState(dayjs());
 
   useEffect(() => {
     const timerId = setInterval(() => {
-      setTime(new Date());
+      setTime(dayjs());
     }, 1000); 
 
     return () => clearInterval(timerId);
   }, []); 
 
-  const formattedDate = time.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const formattedDate = time.format('dddd, MMMM D, YYYY');
 
-  const formattedTime = time.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true,
-  });
+  const formattedTime = time.format('hh:mm:ss A');
 
   return (
     <div className={styles.clockContainer}>

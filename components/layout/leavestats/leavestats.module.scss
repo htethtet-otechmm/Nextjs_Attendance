@@ -1,0 +1,46 @@
+.statsContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .stats {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .statCard {
+    background-color: #e9e9e9;
+    padding: 20px;
+    min-width: 162px;
+  }
+  
+  .value {
+    font-size: 28px;
+  }
+  
+  .label {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  
+    span {
+      color: #555;
+    }
+  }
+  
+  .requestButton {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
