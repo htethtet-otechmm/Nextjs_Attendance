@@ -22,17 +22,13 @@
   
   .label {
     font-size: 14px;
-    color: #666;
+    color: #000;
   }
   
   .actions {
     display: flex;
     align-items: center;
     gap: 20px;
-  
-    span {
-      color: #555;
-    }
   }
   
   .requestButton {

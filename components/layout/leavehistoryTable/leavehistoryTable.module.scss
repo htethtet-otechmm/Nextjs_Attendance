@@ -1,12 +1,6 @@
-// .historyContainer {
-//     background-color: #fff;
-//     padding: 20px;
-//     border-radius: 8px;
-//   }
-  
-  .historyHeader {
+.historyHeader {
     display: flex;
-    justify-content: space-between;
+    gap: 25px;
     align-items: center;
     margin-bottom: 20px;
   
@@ -34,13 +28,11 @@
   
     th, td {
       text-align: left;
-      padding: 15px 10px;
-      border-bottom: 1px solid #f0f0f0;
-      vertical-align: middle;
+      padding: 23px 20px;
     }
   
     th {
-      color: #888;
+      color: #000;
       font-weight: normal;
     }
   }
@@ -48,21 +40,22 @@
   .statusBadge {
     padding: 5px 12px;
     border-radius: 12px;
-    font-weight: bold;
-    font-size: 12px;
-    color: #333;
+    font-size: 16px;
   
     &.pending {
-      background-color: #fffbe6;
-      border: 1px solid #ffe58f;
+      background-color: #FFF3CD;
+      color: #856404;
+      // border: 1px solid #ffe58f;
     }
     &.approved {
-      background-color: #f6ffed;
-      border: 1px solid #b7eb8f;
+      background-color: #D4EDDA;
+      color: #155724;
+      // border: 1px solid #b7eb8f;
     }
     &.rejected {
-      background-color: #fff1f0;
-      border: 1px solid #ffa39e;
+      background-color: #F8D7DA;
+      color: #721C24;
+      // border: 1px solid #ffa39e;
     }
   }
   
