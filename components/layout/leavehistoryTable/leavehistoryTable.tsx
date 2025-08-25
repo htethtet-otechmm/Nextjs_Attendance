@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { ReactElement, useState } from 'react';
 import useSWR from 'swr';
 import styles from './LeaveHistoryTable.module.scss';
 import { LeaveRequest } from '@/types';
+import Layout from '../layout';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -70,6 +71,10 @@ const LeaveHistoryTable = () => {
     </table>
     </div>
   );
+};
+
+LeaveHistoryTable.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
 };
 
 export default LeaveHistoryTable;

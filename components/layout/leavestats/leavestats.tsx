@@ -17,6 +17,7 @@ const LeaveStats = () => {
 
   const handleSubmit = (formData: any) => {
     console.log("Leave request submitted:", formData);
+
     closeModal();
   };
   return (

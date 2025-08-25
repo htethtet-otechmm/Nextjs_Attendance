@@ -3,21 +3,29 @@ import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import Login from '@/pages/signin';
+import type { ReactElement } from "react";
+import type { NextPageWithLayout } from "./_app";
+import Layout from "@/components/layout/layout";
+import LeaveHistoryTable from "@/components/layout/leavehistoryTable/leavehistoryTable";
+import Clock from "./checkin-out";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export default function Home() {
+const Home: NextPageWithLayout = () => {
   return (
-    <>  
-      <Login />
+    <>
+      <Head>
+        <title>Home Page</title>
+        <meta name="description" content="Welcome to the home page" />
+      </Head>
     </>
   );
-}
+};
+
+Home.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>
+      {page}
+    </Layout>
+  );
+};
+
+export default Home;

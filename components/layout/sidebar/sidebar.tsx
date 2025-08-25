@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './sidebar.module.scss';
+import Link from 'next/link';
 
 const Sidebar = () => {
   return (
@@ -7,10 +8,10 @@ const Sidebar = () => {
       <nav className={styles.nav}>
         <ul>
           <li className={`${styles.navItem} ${styles.active}`}>
-            <a href="/checkin-out">Check In/Out</a>
+            <Link href={"/checkin-out"}>Check In/Out</Link>
           </li>
           <li className={styles.navItem}>
-            <a href="/leave-requests">Leave Requests</a>
+          <Link href={"/leave-requests"}>Leave Requests</Link>
           </li>
         </ul>
       </nav>

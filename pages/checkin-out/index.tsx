@@ -1,9 +1,9 @@
 'use client'; 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 import dayjs from 'dayjs'; 
 import styles from './checkin.module.scss';
-import { MapPin } from "lucide-react";
+import { Layout, MapPin } from "lucide-react";
 
 const Clock = () => {
   const [time, setTime] = useState(dayjs());
@@ -36,5 +36,9 @@ const Clock = () => {
     </div>
   );
 };
+
+// Clock.getLayout = function getLayout(page: ReactElement) {
+//   return <Layout>{page}</Layout>;
+// };
 
 export default Clock;
