@@ -1,50 +1,121 @@
-import React, { useState } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import Select from 'react-select';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 import styles from './leaverequestModal.module.scss';
+import { toast } from 'react-toastify';
+
+type SelectOption = {
+  value: string;
+  label: string;
+};
+
+type FormData = {
+  leaveType: SelectOption;
+  mode: SelectOption;
+  leaveDates: Date;
+  reason: string;
+};
 
 type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (data: FormData) => void; 
 };
 
+const leaveTypeOptions: SelectOption[] = [
+  { value: 'Paid', label: 'Paid' },
+  { value: 'Unpaid', label: 'Unpaid' },
+  { value: 'Sick', label: 'Sick Leave' },
+];
+
+const modeOptions: SelectOption[] = [
+  { value: 'Half-day', label: 'Half-day' },
+  { value: 'Full-day', label: 'Full-day' },
+];
+
 const LeaveRequestModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit }) => {
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const { control, handleSubmit, register } = useForm<FormData>({
+    defaultValues: {
+      leaveType: leaveTypeOptions[0],
+      mode: modeOptions[0], 
+      leaveDates: new Date(),
+      reason: 'Family Issues',
+    },
+  });
 
   if (!isOpen) return null;
+  
+  const handleFormSubmit = (data: FormData) => {
+    console.log('Form Data:', data); 
+    onSubmit(data); 
+    toast.success('Leave request submitted successfully! 🎉');
+  };
 
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <h3>Apply Leave</h3>
-        <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }}>
-          <div className={styles.formGroup}>
-            <label htmlFor="leaveType">Leave Type</label>
-            <select id="leaveType" name="leaveType">
-              <option value="Paid">Paid</option>
-              <option value="Unpaid">Unpaid</option>
-              <option value="Sick">Sick Leave</option>
-            </select>
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label htmlFor="leaveType">Leave Type</label>
+              <Controller
+                name="leaveType"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={leaveTypeOptions}
+                    instanceId="leaveType-select"
+                  />
+                )}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="mode">Mode</label>
+              <Controller
+                name="mode"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={modeOptions}
+                    instanceId="mode-select"
+                  />
+                )}
+              />
+            </div>
           </div>
+
           <div className={styles.formGroup}>
             <label htmlFor="leaveDates">Leave Date(s)</label>
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              placeholderText="Choose Date(s)"
-              className={styles.datePicker}
+            <Controller
+              name="leaveDates"
+              control={control}
+              render={({ field }) => (
+                <DayPicker
+                  mode="single" 
+                  required
+                  selected={field.value}
+                  onSelect={field.onChange} 
+                  className={styles.dayPicker} 
+                />
+              )}
             />
           </div>
+
           <div className={styles.formGroup}>
             <label htmlFor="reason">Reason</label>
             <textarea
               id="reason"
-              name="reason"
               rows={4}
-              defaultValue="Family Issues"
+              {...register('reason')}
             ></textarea>
           </div>
+
           <div className={styles.buttonGroup}>
             <button type="button" className={styles.cancelButton} onClick={onClose}>
               Cancel

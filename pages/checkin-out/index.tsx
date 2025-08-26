@@ -1,23 +1,22 @@
-'use client'; 
-
 import React, { useState, useEffect, ReactElement } from 'react';
-import dayjs from 'dayjs'; 
+import dayjs from 'dayjs';
+import { MapPin } from "lucide-react";
+import { NextPageWithLayout } from '../_app';
+import Layout from '@/components/layout/layout';
 import styles from './checkin.module.scss';
-import { Layout, MapPin } from "lucide-react";
 
-const Clock = () => {
+const CheckinPage: NextPageWithLayout = () => {
   const [time, setTime] = useState(dayjs());
 
   useEffect(() => {
     const timerId = setInterval(() => {
       setTime(dayjs());
-    }, 1000); 
+    }, 1000);
 
     return () => clearInterval(timerId);
-  }, []); 
+  }, []);
 
   const formattedDate = time.format('dddd, MMMM D, YYYY');
-
   const formattedTime = time.format('hh:mm:ss A');
 
   return (
@@ -37,8 +36,12 @@ const Clock = () => {
   );
 };
 
-// Clock.getLayout = function getLayout(page: ReactElement) {
-//   return <Layout>{page}</Layout>;
-// };
+CheckinPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>
+      {page}
+    </Layout>
+  );
+};
 
-export default Clock;
+export default CheckinPage;

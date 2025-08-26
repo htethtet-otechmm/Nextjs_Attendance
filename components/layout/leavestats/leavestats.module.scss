@@ -1,42 +1,42 @@
 .statsContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-  }
-  
-  .stats {
-    display: flex;
-    gap: 20px;
-  }
-  
-  .statCard {
-    background-color: #e9e9e9;
-    padding: 20px;
-    min-width: 162px;
-  }
-  
-  .value {
-    font-size: 28px;
-  }
-  
-  .label {
-    font-size: 14px;
-    color: #000;
-  }
-  
-  .actions {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  
-  .requestButton {
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.875rem;
+}
+
+.stats {
+  display: flex;
+  gap: 1.25rem; 
+}
+
+.statCard {
+  background-color: #e9e9e9;
+  padding: 1.25rem; 
+  min-width: 10.125rem; 
+}
+
+.value {
+  font-size: 1.75rem; 
+}
+
+.label {
+  font-size: 0.875rem; 
+  color: #000;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem; 
+}
+
+.requestButton {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem; 
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+}

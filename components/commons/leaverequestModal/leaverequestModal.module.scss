@@ -24,7 +24,12 @@
   }
 }
 
+.formRow {
+  display: flex; 
+  gap: 20px; 
+}
 .formGroup {
+  flex: 1;
   margin-bottom: 1.5rem;
   label {
     display: block;
@@ -46,7 +51,7 @@
       border-color: #4a55e0;
     }
   }
-  .datePicker {
+  .dayPicker {
     width: 100%;
   }
 }
@@ -75,3 +80,4 @@
     color: #F5F5F5;
   }
 }
+
