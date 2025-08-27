@@ -6,7 +6,7 @@ const Home: NextPageWithLayout = () => {
     <>
       <Head>
         <title>Home Page</title>
-        <meta name="description" content="Welcome to the home page" />
+        <meta name="viewport" content="width=750px" />
       </Head>
     </>
   );

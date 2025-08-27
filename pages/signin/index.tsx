@@ -1,21 +1,25 @@
-'use client'; 
-
-import React, { useState } from 'react'; 
+import React from 'react';
 import styles from './signinPage.module.scss';
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/router';
+import { signIn } from 'next-auth/react';
 
-const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState(''); 
-  const router = useRouter(); 
+const LoginPage: React.FC = () => {
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [error, setError] = React.useState('');
+  const router = useRouter();
 
-  const handleLogin = (event: React.FormEvent) => {
-    event.preventDefault(); 
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError('');
 
-    if (email === 'admin@example.com' && password === 'password123') {
-      alert('Login successful!');
-      setError('');
+    const result = await signIn('credentials', {
+      redirect: false,
+      email: email,
+      password: password,
+    });
+
+    if (result && result.ok) {
       router.push('/checkin-out');
     } else {
       setError('Invalid email or password. Please try again.');
@@ -37,8 +41,8 @@ const LoginPage = () => {
               className={styles.input}
               placeholder="admin@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required 
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              required
             />
           </div>
 
@@ -52,11 +56,11 @@ const LoginPage = () => {
               className={styles.input}
               placeholder="password123"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               required
             />
           </div>
-          
+
           {error && <p className={styles.errorText}>{error}</p>}
 
           <button type="submit" className={styles.signInButton}>

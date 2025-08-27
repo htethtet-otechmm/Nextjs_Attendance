@@ -9,11 +9,11 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <div>
-      <Header />
+    <div> 
       <div className={styles.contentWrapper}>
         <Sidebar />
-        <main style={{ flex: 1, padding: '1rem' }}>
+        <main className={styles.mainContent}>
+        <Header />
           {children}
         </main>
       </div>
