@@ -2,16 +2,17 @@ import React from 'react';
 import styles from './signinPage.module.scss';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
+import { toast } from 'react-toastify';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [error, setError] = React.useState('');
   const router = useRouter();
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError('');
+
+    const toastId = toast.loading("You are logged in...");
 
     const result = await signIn('credentials', {
       redirect: false,
@@ -20,10 +21,17 @@ const LoginPage: React.FC = () => {
     });
 
     if (result && result.ok) {
-      router.push('/checkin-out');
-    } else {
-      setError('Invalid email or password. Please try again.');
-    }
+      toast.update(toastId, { 
+        render: "Login successfully！🎉", 
+        type: "success", 
+        isLoading: false, 
+        autoClose: 2000
+      });
+      setTimeout(() => {
+        router.push('/checkin-out');
+      }, 2000);
+
+    } 
   };
 
   return (
@@ -60,8 +68,6 @@ const LoginPage: React.FC = () => {
               required
             />
           </div>
-
-          {error && <p className={styles.errorText}>{error}</p>}
 
           <button type="submit" className={styles.signInButton}>
             Sign In
