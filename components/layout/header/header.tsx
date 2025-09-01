@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSession } from 'next-auth/react'; // useSession ကို import လုပ်ပါ
 import styles from './header.module.scss';
 
 const UserIcon = () => (
@@ -17,12 +18,22 @@ const UserIcon = () => (
 );
 
 const Header = () => {
+  // useSession hook ကိုသုံးပြီး session data ကို ရယူပါ
+  const { data: session, status } = useSession();
+
   return (
     <header className={styles.header}>
       <div className={styles.adminView}>
-        <button className={styles.adminButton}>Admin View</button>
-        <div className={styles.userIcon}>
-          <UserIcon />
+        <button className={styles.adminButton}>
+        {status === 'authenticated' && session.user?.name && (
+            <span className={styles.userName}>{session.user.name}</span>
+          )}
+        </button>
+        
+        <div className={styles.userInfo}>
+          <div className={styles.userIcon}>
+            <UserIcon />
+          </div>
         </div>
       </div>
     </header>
