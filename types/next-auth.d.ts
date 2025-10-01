@@ -11,11 +11,16 @@ declare module "next-auth" {
 
   interface User extends DefaultUser {
     role: string;
+    accessToken?: string;
+    tenantName?: string;
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT extends DefaultJWT {
+    id: string;
     role: string;
+    accessToken?: string;
+    tenantName?: string;
   }
 }
