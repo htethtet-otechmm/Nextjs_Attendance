@@ -1,37 +1,43 @@
-import React from 'react';
-import styles from './signinPage.module.scss';
-import { useRouter } from 'next/router';
-import { signIn } from 'next-auth/react';
-import { toast } from 'react-toastify';
+import React from "react";
+import styles from "./signinPage.module.scss";
+import { useRouter } from "next/router";
+import { getSession, GetSessionParams, signIn } from "next-auth/react";
+import { toast } from "react-toastify";
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const router = useRouter();
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const toastId = toast.loading("You are logged in...");
+    const toastId = toast.loading("Logging you in...");
 
-    const result = await signIn('credentials', {
+    const result = await signIn("credentials", {
       redirect: false,
       email: email,
       password: password,
     });
 
     if (result && result.ok) {
-      toast.update(toastId, { 
-        render: "Login successfully！🎉", 
-        type: "success", 
-        isLoading: false, 
-        autoClose: 2000
+      toast.update(toastId, {
+        render: "Login successfully! 🎉",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
       });
       setTimeout(() => {
-        router.push('/checkin-out');
+        router.push("/checkin-out");
       }, 2000);
-
-    } 
+    } else {
+      toast.update(toastId, {
+        render: "Invalid email or password. Please try again.", // Error message for the user
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
   };
 
   return (
@@ -49,7 +55,9 @@ const LoginPage: React.FC = () => {
               className={styles.input}
               placeholder="admin@example.com"
               value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
               required
             />
           </div>
@@ -64,7 +72,9 @@ const LoginPage: React.FC = () => {
               className={styles.input}
               placeholder="password123"
               value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
               required
             />
           </div>
@@ -81,5 +91,24 @@ const LoginPage: React.FC = () => {
     </div>
   );
 };
+
+export async function getServerSideProps(
+  context: GetSessionParams | undefined
+) {
+  const session = await getSession(context);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/checkin-out",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+}
 
 export default LoginPage;
