@@ -24,16 +24,15 @@ export const authOptions: NextAuthOptions = {
 
           const user = await res.json();
 
-          console.log("API Response OK:", res.ok); // API call အောင်မြင်လား စစ်ပါ
-          console.log("User Data from API:", user); // API ကနေ ဘာ data ပြန်လာလဲ ကြည့်ပါ
+          console.log("API Response OK:", res.ok); 
+          console.log("User Data from API:", user);
           if (res.ok && user) {
             return user;
           }
 
           return null;
         } catch (error) {
-          // console.error("Login Error:", error);
-          console.error("Authorize Function Error:", error); // Error ကို ကြည့်ပါ
+          console.error("Authorize Function Error:", error); 
           return null;
         }
       },
