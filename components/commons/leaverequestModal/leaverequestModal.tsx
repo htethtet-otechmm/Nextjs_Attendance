@@ -1,10 +1,10 @@
-import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import Select from 'react-select';
-import { DayPicker } from 'react-day-picker';
-import 'react-day-picker/dist/style.css';
-import styles from './leaverequestModal.module.scss';
-import { toast } from 'react-toastify';
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import Select from "react-select";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
+import styles from "./leaverequestModal.module.scss";
+import { toast } from "react-toastify";
 
 type SelectOption = {
   value: string;
@@ -21,36 +21,40 @@ type FormData = {
 type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: FormData) => void; 
+  onSubmit: (data: FormData) => void;
 };
 
 const leaveTypeOptions: SelectOption[] = [
-  { value: 'Paid', label: 'Paid' },
-  { value: 'Unpaid', label: 'Unpaid' },
-  { value: 'Sick', label: 'Sick Leave' },
+  { value: "Paid", label: "Paid" },
+  { value: "Unpaid", label: "Unpaid" },
+  { value: "Sick", label: "Sick Leave" },
 ];
 
 const modeOptions: SelectOption[] = [
-  { value: 'Half-day', label: 'Half-day' },
-  { value: 'Full-day', label: 'Full-day' },
+  { value: "Half-day", label: "Half-day" },
+  { value: "Full-day", label: "Full-day" },
 ];
 
-const LeaveRequestModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit }) => {
+const LeaveRequestModal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  onSubmit,
+}) => {
   const { control, handleSubmit, register } = useForm<FormData>({
     defaultValues: {
       leaveType: leaveTypeOptions[0],
-      mode: modeOptions[0], 
+      mode: modeOptions[0],
       leaveDates: new Date(),
-      reason: 'Family Issues',
+      reason: "Family Issues",
     },
   });
 
   if (!isOpen) return null;
-  
+
   const handleFormSubmit = (data: FormData) => {
-    console.log('Form Data:', data); 
-    onSubmit(data); 
-    toast.success('Leave request submitted successfully! 🎉');
+    console.log("Form Data:", data);
+    onSubmit(data);
+    toast.success("Leave request submitted successfully! 🎉");
   };
 
   return (
@@ -97,11 +101,11 @@ const LeaveRequestModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit }) 
               control={control}
               render={({ field }) => (
                 <DayPicker
-                  mode="single" 
+                  mode="single"
                   required
                   selected={field.value}
-                  onSelect={field.onChange} 
-                  className={styles.dayPicker} 
+                  onSelect={field.onChange}
+                  className={styles.dayPicker}
                 />
               )}
             />
@@ -109,15 +113,15 @@ const LeaveRequestModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit }) 
 
           <div className={styles.formGroup}>
             <label htmlFor="reason">Reason</label>
-            <textarea
-              id="reason"
-              rows={4}
-              {...register('reason')}
-            ></textarea>
+            <textarea id="reason" rows={4} {...register("reason")}></textarea>
           </div>
 
           <div className={styles.buttonGroup}>
-            <button type="button" className={styles.cancelButton} onClick={onClose}>
+            <button
+              type="button"
+              className={styles.cancelButton}
+              onClick={onClose}
+            >
               Cancel
             </button>
             <button type="submit" className={styles.submitButton}>
