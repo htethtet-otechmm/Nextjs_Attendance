@@ -14,14 +14,22 @@ type SelectOption = {
 type FormData = {
   leaveType: SelectOption;
   mode: SelectOption;
-  leaveDates: Date;
+  leaveDates: Date[] | undefined;
   reason: string;
+};
+
+type ApiSubmitData = {
+  leaveType: string;
+  mode: string;
+  leaveDates: Date[] | undefined;
+  reason: string;
+  numberOfDays: number;
 };
 
 type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: ApiSubmitData) => void;
 };
 
 const leaveTypeOptions: SelectOption[] = [
@@ -33,6 +41,7 @@ const leaveTypeOptions: SelectOption[] = [
 const modeOptions: SelectOption[] = [
   { value: "Half-day", label: "Half-day" },
   { value: "Full-day", label: "Full-day" },
+  { value: "Multi-days", label: "Multi-days" },
 ];
 
 const LeaveRequestModal: React.FC<ModalProps> = ({
@@ -40,21 +49,37 @@ const LeaveRequestModal: React.FC<ModalProps> = ({
   onClose,
   onSubmit,
 }) => {
-  const { control, handleSubmit, register } = useForm<FormData>({
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors },
+    reset,
+  } = useForm<FormData>({
     defaultValues: {
       leaveType: leaveTypeOptions[0],
       mode: modeOptions[0],
-      leaveDates: new Date(),
-      reason: "Family Issues",
+      leaveDates: [new Date()],
+      reason: "",
     },
   });
 
   if (!isOpen) return null;
 
   const handleFormSubmit = (data: FormData) => {
-    console.log("Form Data:", data);
-    onSubmit(data);
+    const transformedData = {
+      leaveType: data.leaveType.value,
+      mode: data.mode.value,
+      leaveDates: data.leaveDates,
+      reason: data.reason,
+      numberOfDays: data.leaveDates?.length || 0,
+    };
+    console.log("Submit Data", transformedData);
+
+    onSubmit(transformedData);
     toast.success("Leave request submitted successfully! 🎉");
+    reset();
+    onClose();
   };
 
   return (
@@ -93,16 +118,16 @@ const LeaveRequestModal: React.FC<ModalProps> = ({
               />
             </div>
           </div>
-
           <div className={styles.formGroup}>
             <label htmlFor="leaveDates">Leave Date(s)</label>
             <Controller
               name="leaveDates"
               control={control}
+              rules={{ required: true }} // Validation rule
               render={({ field }) => (
                 <DayPicker
-                  mode="single"
-                  required
+                  mode="multiple"
+                  min={1}
                   selected={field.value}
                   onSelect={field.onChange}
                   className={styles.dayPicker}
@@ -113,7 +138,14 @@ const LeaveRequestModal: React.FC<ModalProps> = ({
 
           <div className={styles.formGroup}>
             <label htmlFor="reason">Reason</label>
-            <textarea id="reason" rows={4} {...register("reason")}></textarea>
+            <textarea
+              id="reason"
+              rows={4}
+              {...register("reason", { required: "Reason is required." })}
+            ></textarea>
+            {errors.reason && (
+              <p className={styles.errorMessage}>{errors.reason.message}</p>
+            )}
           </div>
 
           <div className={styles.buttonGroup}>

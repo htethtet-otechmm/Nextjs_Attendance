@@ -16,12 +16,14 @@ const StatusBadge = ({ status }: { status: LeaveRequest["status"] }) => {
 const LeaveHistoryTable = () => {
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
   const { mutate } = useSWRConfig();
-  const apiEndpoint = "/api/leave-requests";
+  const apiEndpoint = "http://localhost:3000/leave";
   const {
     data: leaveData,
     error,
     isLoading,
   } = useSWR<LeaveRequest[]>(apiEndpoint, fetcher);
+
+  console.log("API Data:", leaveData);
 
   const toggleMenu = (id: number) => {
     setActiveMenu(activeMenu === id ? null : id);
