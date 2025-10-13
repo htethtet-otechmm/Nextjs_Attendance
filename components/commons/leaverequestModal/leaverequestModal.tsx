@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import styles from "./leaverequestModal.module.scss";
 import { toast } from "react-toastify";
+import { LeaveRequest } from "@/types";
 
 type SelectOption = {
   value: string;
@@ -18,18 +19,19 @@ type FormData = {
   reason: string;
 };
 
+type ModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: any) => void;
+  initialData?: LeaveRequest | null;
+};
+
 type ApiSubmitData = {
   leaveType: string;
   mode: string;
   leaveDates: Date[] | undefined;
   reason: string;
   numberOfDays: number;
-};
-
-type ModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: ApiSubmitData) => void;
 };
 
 const leaveTypeOptions: SelectOption[] = [
@@ -48,21 +50,55 @@ const LeaveRequestModal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
+  initialData,
 }) => {
+  // const {
+  //   control,
+  //   handleSubmit,
+  //   register,
+  //   formState: { errors },
+  //   reset,
+  // } = useForm<FormData>({
+  //   defaultValues: {
+  //     leaveType: leaveTypeOptions[0],
+  //     mode: modeOptions[0],
+  //     leaveDates: [new Date()],
+  //     reason: "",
+  //   },
+  // });
+
   const {
     control,
     handleSubmit,
     register,
     formState: { errors },
     reset,
-  } = useForm<FormData>({
-    defaultValues: {
-      leaveType: leaveTypeOptions[0],
-      mode: modeOptions[0],
-      leaveDates: [new Date()],
-      reason: "",
-    },
-  });
+  } = useForm<FormData>();
+
+  useEffect(() => {
+    if (initialData) {
+      const defaultLeaveType = leaveTypeOptions.find(
+        (opt) => opt.value === initialData.leaveType
+      );
+      const defaultMode = modeOptions.find(
+        (opt) => opt.value === initialData.mode
+      );
+
+      reset({
+        leaveType: defaultLeaveType,
+        mode: defaultMode,
+        leaveDates: initialData.dates.map((d) => new Date(d)),
+        reason: initialData.reason,
+      });
+    } else {
+      reset({
+        leaveType: leaveTypeOptions[0],
+        mode: modeOptions[0],
+        leaveDates: [new Date()],
+        reason: "",
+      });
+    }
+  }, [initialData, reset]);
 
   if (!isOpen) return null;
 
@@ -85,7 +121,7 @@ const LeaveRequestModal: React.FC<ModalProps> = ({
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h3>Apply Leave</h3>
+        <h3>{initialData ? "Edit Leave Request" : "Apply Leave"}</h3>
         <form onSubmit={handleSubmit(handleFormSubmit)}>
           <div className={styles.formRow}>
             <div className={styles.formGroup}>

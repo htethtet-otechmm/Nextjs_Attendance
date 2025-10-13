@@ -3,6 +3,7 @@ import useSWR, { useSWRConfig } from "swr";
 import styles from "./LeaveHistoryTable.module.scss";
 import { LeaveRequest } from "@/types";
 import Layout from "../layout";
+import LeaveRequestModal from "@/components/commons/leaverequestModal/leaverequestModal";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -16,6 +17,8 @@ const StatusBadge = ({ status }: { status: LeaveRequest["status"] }) => {
 const LeaveHistoryTable = () => {
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
   const { mutate } = useSWRConfig();
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [requestToEdit, setRequestToEdit] = useState<LeaveRequest | null>(null);
   const apiEndpoint = "http://localhost:3000/leave";
   const {
     data: leaveData,
@@ -27,6 +30,29 @@ const LeaveHistoryTable = () => {
 
   const toggleMenu = (id: number) => {
     setActiveMenu(activeMenu === id ? null : id);
+  };
+
+  const handleEdit = (request: LeaveRequest) => {
+    setRequestToEdit(request);
+    setEditModalOpen(true);
+    setActiveMenu(null);
+  };
+
+  const handleUpdateSubmit = async (formData: any) => {
+    if (!requestToEdit) return;
+
+    try {
+      await fetch(`${apiEndpoint}/${requestToEdit.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      mutate(apiEndpoint);
+      setEditModalOpen(false);
+      setRequestToEdit(null);
+    } catch (err) {
+      console.error("Failed to update the request:", err);
+    }
   };
 
   const handleDelete = async (id: number) => {
@@ -91,9 +117,14 @@ const LeaveHistoryTable = () => {
                   </button>
                   {activeMenu === request.id && (
                     <div className={styles.dropdownMenu}>
-                      <a href="#">Edit</a>
                       <a href="#">
-                        <button onClick={() => handleDelete(request.id)}>
+                        <button onClick={() => handleEdit(request)} className={styles.actionButton}>
+                          Edit
+                        </button>
+                      </a>
+
+                      <a href="#">
+                        <button onClick={() => handleDelete(request.id)} className={styles.actionButton}>
                           Delete
                         </button>
                       </a>
@@ -104,6 +135,15 @@ const LeaveHistoryTable = () => {
             ))}
         </tbody>
       </table>
+
+      {isEditModalOpen && (
+        <LeaveRequestModal
+          isOpen={isEditModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          onSubmit={handleUpdateSubmit}
+          initialData={requestToEdit}
+        />
+      )}
     </div>
   );
 };

@@ -1,95 +1,102 @@
 .historyHeader {
-    display: flex;
-    gap: 25px;
-    align-items: center;
-    margin-bottom: 20px;
-  
-    h2 {
-      margin: 0;
-      font-size: 20px;
-    }
-  }
-  
-  .yearNav {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .historyTable {
-    width: 100%;
-    border-collapse: collapse;
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  margin-bottom: 20px;
 
-    thead {
-        background: #D9D9D9;
-    }
-  
-    th, td {
-      text-align: left;
-      padding: 23px 20px;
-    }
-  
-    th {
-      color: #000;
-      font-weight: normal;
+  h2 {
+    margin: 0;
+    font-size: 20px;
+  }
+}
+
+.actionButton {
+  border: none !important;
+  background: none !important;
+  font-size: 16px;
+}
+
+.yearNav {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.historyTable {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: #d9d9d9;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 23px 20px;
+  }
+
+  th {
+    color: #000;
+    font-weight: normal;
+  }
+}
+
+.statusBadge {
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 16px;
+
+  &.pending {
+    background-color: #fff3cd;
+    color: #856404;
+    // border: 1px solid #ffe58f;
+  }
+  &.approved {
+    background-color: #d4edda;
+    color: #155724;
+    // border: 1px solid #b7eb8f;
+  }
+  &.rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+    // border: 1px solid #ffa39e;
+  }
+}
+
+.actionCell {
+  position: relative;
+  text-align: right;
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.dropdownMenu {
+  position: absolute;
+  right: 20px;
+  top: 40px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+
+  a {
+    padding: 8px 15px;
+    text-decoration: none;
+    color: #333;
+    &:hover {
+      background-color: #f5f5f5;
     }
   }
-  
-  .statusBadge {
-    padding: 5px 12px;
-    border-radius: 12px;
-    font-size: 16px;
-  
-    &.pending {
-      background-color: #FFF3CD;
-      color: #856404;
-      // border: 1px solid #ffe58f;
-    }
-    &.approved {
-      background-color: #D4EDDA;
-      color: #155724;
-      // border: 1px solid #b7eb8f;
-    }
-    &.rejected {
-      background-color: #F8D7DA;
-      color: #721C24;
-      // border: 1px solid #ffa39e;
-    }
-  }
-  
-  .actionCell {
-    position: relative;
-    text-align: right;
-  }
-  
-  .menuButton {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    line-height: 1;
-  }
-  
-  .dropdownMenu {
-    position: absolute;
-    right: 20px;
-    top: 40px;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    z-index: 10;
-  
-    a {
-      padding: 8px 15px;
-      text-decoration: none;
-      color: #333;
-      &:hover {
-        background-color: #f5f5f5;
-      }
-    }
-  }
+}
