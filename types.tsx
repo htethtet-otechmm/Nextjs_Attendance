@@ -1,5 +1,12 @@
 export type LeaveStatus = "Pending" | "Approved" | "Rejected";
 
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: 'admin' | 'user';
+}
+
 export interface LeaveRequest {
   id: number;
   dates: string[];
@@ -9,4 +16,5 @@ export interface LeaveRequest {
   reason: string;
   submittedOn: string;
   status: LeaveStatus;
+  user?: User;
 }
