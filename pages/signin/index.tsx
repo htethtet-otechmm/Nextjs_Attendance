@@ -1,38 +1,93 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./signinPage.module.scss";
 import { useRouter } from "next/router";
-import { getSession, GetSessionParams, signIn } from "next-auth/react";
 import { toast } from "react-toastify";
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      const userString = localStorage.getItem("user");
+      if (userString && userString !== "undefined") {
+        try {
+          const user = JSON.parse(userString);
+          if (user.role === "admin") {
+            router.push("/admin/leave-requests");
+          } else {
+            router.push("/leave-requests");
+          }
+        } catch (e) {
+          router.push("/leave-requests");
+        }
+      } else {
+        router.push("/leave-requests");
+      }
+    }
+  }, [router]);
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const toastId = toast.loading("Logging you in...");
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      email: email,
-      password: password,
-    });
-
-    if (result && result.ok) {
-      toast.update(toastId, {
-        render: "Login successfully! 🎉",
-        type: "success",
-        isLoading: false,
-        autoClose: 2000,
+    try {
+      const response = await fetch("http://localhost:3000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
-      setTimeout(() => {
-        router.push("/checkin-out");
-      }, 2000);
-    } else {
+
+      if (response.ok) {
+        const data = await response.json();
+        if (
+          data &&
+          data.user &&
+          typeof data.user === "object" &&
+          data.accessToken
+        ) {
+          localStorage.setItem("accessToken", data.accessToken);
+          localStorage.setItem("user", JSON.stringify(data.user));
+
+          toast.update(toastId, {
+            render: "Login successfully! 🎉",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+          });
+
+          setTimeout(() => {
+            if (data.user.role === "admin") {
+              router.push("/admin/leave-requests");
+            } else {
+              router.push("/leave-requests");
+            }
+          }, 2000);
+        } else {
+          console.error(
+            "Login response is missing 'user' object or 'accessToken':",
+            data
+          );
+          toast.update(toastId, {
+            render: "Login failed: Invalid data received from server.",
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+          });
+        }
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Invalid email or password");
+      }
+    } catch (error: any) {
+      // Error handling
       toast.update(toastId, {
-        render: "Invalid email or password. Please try again.", // Error message for the user
+        render: error.message || "Invalid email or password. Please try again.",
         type: "error",
         isLoading: false,
         autoClose: 3000,
@@ -78,7 +133,6 @@ const LoginPage: React.FC = () => {
               required
             />
           </div>
-
           <button type="submit" className={styles.signInButton}>
             Sign In
           </button>
@@ -91,24 +145,5 @@ const LoginPage: React.FC = () => {
     </div>
   );
 };
-
-export async function getServerSideProps(
-  context: GetSessionParams | undefined
-) {
-  const session = await getSession(context);
-
-  if (session) {
-    return {
-      redirect: {
-        destination: "/checkin-out",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-}
 
 export default LoginPage;

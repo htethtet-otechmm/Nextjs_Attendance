@@ -1,9 +1,10 @@
-import { ReactElement, useState, useEffect } from "react"; 
+import { ReactElement, useState, useEffect } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import styles from "./LeaveHistoryTable.module.scss";
-import { LeaveRequest } from "@/types"; 
+import { LeaveRequest } from "@/types";
 import Layout from "../layout";
 import LeaveRequestModal from "@/components/commons/leaverequestModal/leaverequestModal";
+import router from "next/router";
 
 const fetcher = async (url: string) => {
   const token = localStorage.getItem("accessToken");
@@ -15,7 +16,7 @@ const fetcher = async (url: string) => {
   const res = await fetch(url, {
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -31,43 +32,55 @@ const fetcher = async (url: string) => {
 };
 
 const StatusBadge = ({ status }: { status: LeaveRequest["status"] }) => {
-  const statusClass = styles[status?.toLowerCase() || 'pending'];
+  const statusClass = styles[status?.toLowerCase() || "pending"];
   return (
     <span className={`${styles.statusBadge} ${statusClass}`}>{status}</span>
   );
 };
 
-const LeaveHistoryTable = ({ role }: { role: 'admin' | 'user' }) => {
+const LeaveHistoryTable = ({ role }: { role: "admin" | "user" }) => {
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
   const { mutate } = useSWRConfig();
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [requestToEdit, setRequestToEdit] = useState<LeaveRequest | null>(null);
-  
+
   const [userId, setUserId] = useState<number | null>(null);
 
+  // components/layout/leavehistoryTable/leavehistoryTable.tsx
+
   useEffect(() => {
-    if (role === 'user') {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        setUserId(user.id);
+    if (role === "user") {
+      // MODIFIED: Application tab ထဲမှာ တွေ့တဲ့ key အမှန်ကို ပြောင်းထည့်ပါ။
+      const storedUser = localStorage.getItem("user"); // "user" အစား တွေ့တဲ့ key
+
+      if (storedUser && storedUser !== "undefined") {
+        try {
+          const user = JSON.parse(storedUser);
+          setUserId(user.id);
+        } catch (e) {
+          console.error("Failed to parse user", e);
+        }
+      } else {
+        console.log(
+          "No valid user found in localStorage. Redirecting to signin."
+        );
+        // router.push("/signin"); // Loop မဖြစ်အောင် ဒီ redirect ကို ခဏပိတ်ထား (comment out) လုပ်ပါ။
       }
     }
-  }, [role]);
+  }, [role, router]);
 
-  const apiEndpoint = role === 'admin'
-    ? 'http://localhost:3000/leave/admin'
-    : (userId ? `http://localhost:3000/leave/user/${userId}` : null);
+  const apiEndpoint =
+    role === "admin"
+      ? "http://localhost:3000/leave/admin"
+      : userId
+      ? `http://localhost:3000/leave/user/${userId}`
+      : null;
 
   const {
     data: leaveData,
     error,
     isLoading,
-  } = useSWR<LeaveRequest[]>(
-    apiEndpoint,
-    fetcher,
-    { revalidateOnFocus: true }
-  );
+  } = useSWR<LeaveRequest[]>(apiEndpoint, fetcher, { revalidateOnFocus: true });
 
   console.log("API Data:", leaveData);
 
@@ -88,9 +101,9 @@ const LeaveHistoryTable = ({ role }: { role: 'admin' | 'user' }) => {
     try {
       await fetch(`http://localhost:3000/leave/${requestToEdit.id}`, {
         method: "PATCH",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
@@ -110,8 +123,8 @@ const LeaveHistoryTable = ({ role }: { role: 'admin' | 'user' }) => {
       await fetch(`http://localhost:3000/leave/${id}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       mutate(apiEndpoint);
     } catch (err) {
@@ -121,16 +134,19 @@ const LeaveHistoryTable = ({ role }: { role: 'admin' | 'user' }) => {
   };
 
   // NEW: Admin actions (Approve / Reject)
-  const handleAdminAction = async (id: number, action: 'approve' | 'reject') => {
+  const handleAdminAction = async (
+    id: number,
+    action: "approve" | "reject"
+  ) => {
     if (!apiEndpoint) return;
     const token = localStorage.getItem("accessToken");
-    
+
     try {
       await fetch(`http://localhost:3000/leave/${id}/${action}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       mutate(apiEndpoint);
@@ -140,14 +156,19 @@ const LeaveHistoryTable = ({ role }: { role: 'admin' | 'user' }) => {
     setActiveMenu(null);
   };
 
-  if (role === 'user' && !userId) return <div>Loading user data...</div>;
-  if (error) return <div>Failed to load leave requests. Error: {error.message}</div>;
+  if (role === "user" && !userId) return <div>Loading user data...</div>;
+  if (error)
+    return <div>Failed to load leave requests. Error: {error.message}</div>;
   if (isLoading || !apiEndpoint) return <div>Loading...</div>;
 
   return (
     <div className={styles.historyContainer}>
       <div className={styles.historyHeader}>
-        <h2>{role === 'admin' ? 'All Leave Requests (Admin)' : 'My Leave Request History'}</h2>
+        <h2>
+          {role === "admin"
+            ? "All Leave Requests (Admin)"
+            : "My Leave Request History"}
+        </h2>
         <div className={styles.yearNav}>
           <span>&lt;</span>
           <strong>2025</strong>
@@ -157,7 +178,7 @@ const LeaveHistoryTable = ({ role }: { role: 'admin' | 'user' }) => {
       <table className={styles.historyTable}>
         <thead>
           <tr>
-            {role === 'admin' && <th>Employee</th>}
+            {role === "admin" && <th>Employee</th>}
             <th>Dates Requested</th>
             <th>Type</th>
             <th>Mode</th>
@@ -172,7 +193,9 @@ const LeaveHistoryTable = ({ role }: { role: 'admin' | 'user' }) => {
           {leaveData && leaveData.length > 0 ? (
             leaveData.map((request) => (
               <tr key={request.id}>
-                {role === 'admin' && <td>{request.user?.name || 'Unknown User'}</td>}
+                {role === "admin" && (
+                  <td>{request.user?.name || "Unknown User"}</td>
+                )}
                 <td>
                   {Array.isArray(request.dates) ? request.dates.join(", ") : ""}
                 </td>
@@ -193,15 +216,24 @@ const LeaveHistoryTable = ({ role }: { role: 'admin' | 'user' }) => {
                   </button>
                   {activeMenu === request.id && (
                     <div className={styles.dropdownMenu}>
-                      
-                      {role === 'admin' ? (
+                      {role === "admin" ? (
                         <>
-                          {request.status === 'Pending' ? (
+                          {request.status === "Pending" ? (
                             <>
-                              <button onClick={() => handleAdminAction(request.id, 'approve')} className={styles.actionButton}>
+                              <button
+                                onClick={() =>
+                                  handleAdminAction(request.id, "approve")
+                                }
+                                className={styles.actionButton}
+                              >
                                 Approve
                               </button>
-                              <button onClick={() => handleAdminAction(request.id, 'reject')} className={`${styles.actionButton} ${styles.rejectButton}`}>
+                              <button
+                                onClick={() =>
+                                  handleAdminAction(request.id, "reject")
+                                }
+                                className={`${styles.actionButton} ${styles.rejectButton}`}
+                              >
                                 Reject
                               </button>
                             </>
@@ -211,18 +243,24 @@ const LeaveHistoryTable = ({ role }: { role: 'admin' | 'user' }) => {
                         </>
                       ) : (
                         <>
-                          {request.status === 'Pending' ? (
+                          {request.status === "Pending" ? (
                             <>
-                              <button onClick={() => handleEdit(request)} className={styles.actionButton}>
+                              <button
+                                onClick={() => handleEdit(request)}
+                                className={styles.actionButton}
+                              >
                                 Edit
                               </button>
-                              <button onClick={() => handleDelete(request.id)} className={`${styles.actionButton} ${styles.rejectButton}`}>
+                              <button
+                                onClick={() => handleDelete(request.id)}
+                                className={`${styles.actionButton} ${styles.rejectButton}`}
+                              >
                                 Delete
                               </button>
                             </>
-                           ) : (
+                          ) : (
                             <span className={styles.noAction}>No actions</span>
-                           )}
+                          )}
                         </>
                       )}
                     </div>
@@ -232,13 +270,15 @@ const LeaveHistoryTable = ({ role }: { role: 'admin' | 'user' }) => {
             ))
           ) : (
             <tr>
-              <td colSpan={role === 'admin' ? 9 : 8}>No leave requests found.</td>
+              <td colSpan={role === "admin" ? 9 : 8}>
+                No leave requests found.
+              </td>
             </tr>
           )}
         </tbody>
       </table>
 
-      {role === 'user' && isEditModalOpen && (
+      {role === "user" && isEditModalOpen && (
         <LeaveRequestModal
           isOpen={isEditModalOpen}
           onClose={() => setEditModalOpen(false)}

@@ -1,6 +1,5 @@
-import React from 'react';
-import { useSession } from 'next-auth/react'; // useSession ကို import လုပ်ပါ
-import styles from './header.module.scss';
+import React, { useState, useEffect } from "react";
+import styles from "./header.module.scss";
 
 const UserIcon = () => (
   <svg
@@ -18,18 +17,30 @@ const UserIcon = () => (
 );
 
 const Header = () => {
-  // useSession hook ကိုသုံးပြီး session data ကို ရယူပါ
-  const { data: session, status } = useSession();
+  const [username, setUsername] = useState<string>("Guest");
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser && storedUser !== "undefined") {
+      try {
+        const user = JSON.parse(storedUser);
+        if (user && user.name) {
+          setUsername(user.name);
+        }
+      } catch (e) {
+        console.error("Failed to parse user in Header:", e);
+        setUsername("Error");
+      }
+    }
+  }, []);
 
   return (
     <header className={styles.header}>
       <div className={styles.adminView}>
         <button className={styles.adminButton}>
-        {status === 'authenticated' && session.user?.name && (
-            <span className={styles.userName}>{session.user.name}</span>
-          )}
+          <span className={styles.userName}>{username}</span>
         </button>
-        
+
         <div className={styles.userInfo}>
           <div className={styles.userIcon}>
             <UserIcon />
